@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Age Calculator</title> 
+  <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans flex items-center justify-center min-h-screen">
+
+  <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md text-center">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">🎉 Age Calculator</h1>
+    <p class="text-gray-600 mb-6">Select your birth date below</p>
+
+    <!-- Dropdowns -->
+    <div class="flex flex-col md:flex-row gap-3 justify-center">
+      <!-- Day -->
+      <select id="day" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-400 outline-none">
+        <option value="">Day</option>
+      </select>
+
+      <!-- Month -->
+      <select id="month" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-400 outline-none">
+        <option value="">Month</option>
+      </select>
+
+      <!-- Year -->
+      <select id="year" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-400 outline-none">
+        <option value="">Year</option>
+      </select>
+    </div>
+
+    <!-- Result -->
+    <div id="result" class="mt-6 text-lg font-medium text-gray-800"></div>
+  </div>
+
+  <script>
+    const daySelect = document.getElementById('day');
+    const monthSelect = document.getElementById('month');
+    const yearSelect = document.getElementById('year');
+    const resultDiv = document.getElementById('result');
+    const currentYear = new Date().getFullYear();
+
+    // Populate days
+    for (let i = 1; i <= 31; i++) {
+      let opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i;
+      daySelect.appendChild(opt);
+    }
+
+    // Populate months
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    months.forEach((m, i) => {
+      let opt = document.createElement('option');
+      opt.value = i + 1;
+      opt.textContent = m;
+      monthSelect.appendChild(opt);
+    });
+
+    // Populate years
+    for (let i = currentYear; i >= 1900; i--) {
+      let opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i;
+      yearSelect.appendChild(opt);
+    }
+
+    // Watch for changes
+    [daySelect, monthSelect, yearSelect].forEach(select => {
+      select.addEventListener('change', calculateAge);
+    });
+
+    function calculateAge() {
+      const day = parseInt(daySelect.value);
+      const month = parseInt(monthSelect.value);
+      const year = parseInt(yearSelect.value);
+
+      if (!day || !month || !year) {
+        resultDiv.textContent = '';
+        return;
+      }
+
+      const birthDate = new Date(year, month - 1, day);
+      const today = new Date();
+
+      if (birthDate > today) {
+        resultDiv.textContent = '⚠️ Birth date cannot be in the future.';
+        resultDiv.classList.add('text-red-500');
+        return;
+      }
+
+      let years = today.getFullYear() - birthDate.getFullYear();
+      let monthsDiff = today.getMonth() - birthDate.getMonth();
+      let daysDiff = today.getDate() - birthDate.getDate();
+
+      if (daysDiff < 0) {
+        monthsDiff--;
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        daysDiff += prevMonth.getDate();
+      }
+
+      if (monthsDiff < 0) {
+        years--;
+        monthsDiff += 12;
+      }
+
+      resultDiv.classList.remove('text-red-500');
+      resultDiv.innerHTML = `
+        🎉 You are 
+        <span class="text-blue-600 font-semibold">${years}</span> years,
+        <span class="text-blue-600 font-semibold">${monthsDiff}</span> months, and
+        <span class="text-blue-600 font-semibold">${daysDiff}</span> days old.
+      `;
+    }
+  </script>
+
+</body>
+</html>
