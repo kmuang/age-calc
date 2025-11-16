@@ -1,123 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Age Calculator</title> 
-  <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans flex items-center justify-center min-h-screen">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./img/favicon-32x32.png"
+    />
+    <link rel="stylesheet" href="style.css" />
 
-  <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md text-center">
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">🎉 Age Calculator</h1>
-    <p class="text-gray-600 mb-6">Select your birth date below</p>
+    <title>Frontend Mentor | Age calculator app</title>
+  </head>
+  <body>
+    <main>
+      <div class="card">
+        <form>
+          <div class="container">
+            <label for="day" class="input__group">
+              <span>Day</span>
+              <input
+                type="number"
+                id="day"
+                name="day"
+                placeholder="DD"
+                autocomplete="off"
+              />
+              <span class="error__day"></span>
+            </label>
+            <label for="month" class="input__group">
+              <span>Month</span>
+              <input
+                type="number"
+                id="month"
+                name="month"
+                placeholder="MM"
+                autocomplete="off"
+              />
+              <span class="error__month"></span>
+            </label>
+            <label for="year" class="input__group">
+              <span>Year</span>
+              <input
+                type="number"
+                id="year"
+                name="year"
+                placeholder="YYYY"
+                autocomplete="off"
+              />
+              <span class="error__year"></span>
+            </label>
+          </div>
+          <div class="btn">
+            <button type="submit">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="46"
+                height="44"
+                viewBox="0 0 46 44"
+                role="img"
+                title="Submit"
+              >
+                <g fill="none" stroke="#FFF" stroke-width="2">
+                  <path
+                    d="M1 22.019C8.333 21.686 23 25.616 23 44M23 44V0M45 22.019C37.667 21.686 23 25.616 23 44"
+                  />
+                </g>
+              </svg>
+            </button>
+          </div>
+        </form>
 
-    <!-- Dropdowns -->
-    <div class="flex flex-col md:flex-row gap-3 justify-center">
-      <!-- Day -->
-      <select id="day" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-400 outline-none">
-        <option value="">Day</option>
-      </select>
+        <section class="results">
+          <h1 class="results__year">
+            <span class="lines lines__year">--</span>
+            Years
+          </h1>
+          <h2 class="results__month">
+            <span class="lines lines__month">--</span>
+            Months
+          </h2>
+          <h2 class="results__day">
+            <span class="lines lines__day">--</span>
+            Days
+          </h2>
+        </section>
+      </div>
+    </main>
 
-      <!-- Month -->
-      <select id="month" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-400 outline-none">
-        <option value="">Month</option>
-      </select>
-
-      <!-- Year -->
-      <select id="year" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-400 outline-none">
-        <option value="">Year</option>
-      </select>
-    </div>
-
-    <!-- Result -->
-    <div id="result" class="mt-6 text-lg font-medium text-gray-800"></div>
-  </div>
-
-  <script>
-    const daySelect = document.getElementById('day');
-    const monthSelect = document.getElementById('month');
-    const yearSelect = document.getElementById('year');
-    const resultDiv = document.getElementById('result');
-    const currentYear = new Date().getFullYear();
-
-    // Populate days
-    for (let i = 1; i <= 31; i++) {
-      let opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = i;
-      daySelect.appendChild(opt);
-    }
-
-    // Populate months
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    months.forEach((m, i) => {
-      let opt = document.createElement('option');
-      opt.value = i + 1;
-      opt.textContent = m;
-      monthSelect.appendChild(opt);
-    });
-
-    // Populate years
-    for (let i = currentYear; i >= 1900; i--) {
-      let opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = i;
-      yearSelect.appendChild(opt);
-    }
-
-    // Watch for changes
-    [daySelect, monthSelect, yearSelect].forEach(select => {
-      select.addEventListener('change', calculateAge);
-    });
-
-    function calculateAge() {
-      const day = parseInt(daySelect.value);
-      const month = parseInt(monthSelect.value);
-      const year = parseInt(yearSelect.value);
-
-      if (!day || !month || !year) {
-        resultDiv.textContent = '';
-        return;
-      }
-
-      const birthDate = new Date(year, month - 1, day);
-      const today = new Date();
-
-      if (birthDate > today) {
-        resultDiv.textContent = '⚠️ Birth date cannot be in the future.';
-        resultDiv.classList.add('text-red-500');
-        return;
-      }
-
-      let years = today.getFullYear() - birthDate.getFullYear();
-      let monthsDiff = today.getMonth() - birthDate.getMonth();
-      let daysDiff = today.getDate() - birthDate.getDate();
-
-      if (daysDiff < 0) {
-        monthsDiff--;
-        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-        daysDiff += prevMonth.getDate();
-      }
-
-      if (monthsDiff < 0) {
-        years--;
-        monthsDiff += 12;
-      }
-
-      resultDiv.classList.remove('text-red-500');
-      resultDiv.innerHTML = `
-        🎉 You are 
-        <span class="text-blue-600 font-semibold">${years}</span> years,
-        <span class="text-blue-600 font-semibold">${monthsDiff}</span> months, and
-        <span class="text-blue-600 font-semibold">${daysDiff}</span> days old.
-      `;
-    }
-  </script>
-
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
