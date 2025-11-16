@@ -1,2 +1,2 @@
 # age-calc
-Age Calculator, instantly tell your age of years, month, and date. 
+Age Calculator: instantly tell your age in years, months, and days. 
