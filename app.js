@@ -8,15 +8,17 @@ const yearInput = document.getElementById("year");
 const errorDay = document.querySelector(".error__day");
 const errorMonth = document.querySelector(".error__month");
 const errorYear = document.querySelector(".error__year");
-const labels = document.querySelectorAll("label span");
-const inputs = document.querySelectorAll("input");
 
 // Result selectors
 const resultYear = document.querySelector(".lines__year");
 const resultMonth = document.querySelector(".lines__month");
 const resultDay = document.querySelector(".lines__day");
+const errorDate = document.getElementById("error-date");
+const formAnnouncement = document.getElementById("form-announcement");
+const resultAnnouncement = document.getElementById("result-announcement");
 
-// Event listeners
+yearInput.max = String(new Date().getFullYear());
+
 form.addEventListener("submit", function (e) {
   e.preventDefault();
   validateForm();
@@ -24,91 +26,115 @@ form.addEventListener("submit", function (e) {
 
 // Functions
 function validateForm() {
-  // Get the values of the inputs
-  const day = parseInt(dayInput.value || 0);
-  const month = parseInt(monthInput.value || 0);
-  const year = parseInt(yearInput.value || 0);
+  const day = dayInput.valueAsNumber;
+  const month = monthInput.valueAsNumber;
+  const year = yearInput.valueAsNumber;
   const currentDate = new Date();
-  let error = false;
+  const today = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate()
+  );
+  const errors = {
+    day: "",
+    month: "",
+    year: "",
+  };
+  let dateError = "";
 
-  // Validate the day
-  if (day < 1 || day > new Date(year, month, 0).getDate() || isNaN(day)) {
-    error = true;
-    errorDay.textContent = "Must be a valid day";
-  } else {
-    errorDay.textContent = "";
+  if (!Number.isInteger(year) || year < 1900 || year > currentDate.getFullYear()) {
+    errors.year = "Must be a valid year";
   }
 
-  // Validate the month
-  if (month < 1 || month > 12 || isNaN(month)) {
-    error = true;
-    errorMonth.textContent = "Must be a valid month";
-  } else {
-    errorMonth.textContent = "";
+  if (!Number.isInteger(month) || month < 1 || month > 12) {
+    errors.month = "Must be a valid month";
   }
 
-  // Validate the year
-  if (year < 1900 || year > currentDate.getFullYear() || isNaN(year)) {
-    error = true;
-    errorYear.textContent = "Must be a valid year";
-  } else {
-    errorYear.textContent = "";
+  if (!Number.isInteger(day) || day < 1 || day > 31) {
+    errors.day = "Must be a valid day";
+  } else if (!errors.month && !errors.year && day > new Date(year, month, 0).getDate()) {
+    errors.day = "Must be a valid date";
   }
 
-  // Indicate errors
-  if (error) {
-    labels.forEach((label) => {
-      label.style.color = "var(--light-red)";
-    });
+  if (!errors.day && !errors.month && !errors.year) {
+    const birthDate = new Date(year, month - 1, day);
 
-    inputs.forEach((input) => {
-      input.style.border = "1px solid var(--light-red)";
-    });
+    if (birthDate > today) {
+      dateError = "Date cannot be in the future";
+    }
+  }
 
+  const fieldErrors = [
+    { input: dayInput, error: errorDay, message: errors.day },
+    { input: monthInput, error: errorMonth, message: errors.month },
+    { input: yearInput, error: errorYear, message: errors.year },
+  ];
+
+  fieldErrors.forEach(({ input, error, message }) => {
+    const hasError = Boolean(message || dateError);
+    error.textContent = message;
+    input.setAttribute("aria-invalid", String(hasError));
+    input.closest(".input__group").classList.toggle("has-error", hasError);
+  });
+  errorDate.textContent = dateError;
+
+  if (errors.day || errors.month || errors.year || dateError) {
     resultYear.textContent = "--";
     resultMonth.textContent = "--";
     resultDay.textContent = "--";
-  } else {
-    // Reset the labels color
-    labels.forEach((label) => {
-      label.style.color = "var(--smokey-grey)";
-    });
 
-    // Reset the border color
-    inputs.forEach((input) => {
-      input.style.border = "1px solid var(--light-grey)";
-    });
+    const messages = fieldErrors
+      .filter(({ message }) => message)
+      .map(({ input, message }) => `${input.name}: ${message}`);
+    if (dateError) messages.push(dateError);
+    formAnnouncement.textContent = `Please correct the following: ${messages.join(". ")}`;
+    resultAnnouncement.textContent = "";
+    return;
   }
 
-  // If all inputs are valid, display the result
-  if (
-    day >= 1 &&
-    day <= new Date(year, month, 0).getDate() &&
-    month >= 1 &&
-    month <= 12 &&
-    year >= 1900 &&
-    year <= currentDate.getFullYear()
-  ) {
-    error = false;
-    const birthDate = new Date(year, month - 1, day);
-    let days = currentDate.getDate() - birthDate.getDate();
-    let months = currentDate.getMonth() - birthDate.getMonth();
-    let years = currentDate.getFullYear() - birthDate.getFullYear();
+  formAnnouncement.textContent = "";
+  let totalMonths =
+    (today.getFullYear() - year) * 12 + today.getMonth() - (month - 1);
+  const getAnniversary = (monthOffset) => {
+    const anniversaryMonth = month - 1 + monthOffset;
+    const anniversaryYear = year + Math.floor(anniversaryMonth / 12);
+    const normalizedMonth = anniversaryMonth % 12;
+    const lastDayOfMonth = new Date(anniversaryYear, normalizedMonth + 1, 0).getDate();
 
-    if (days < 0) {
-      days = days + 30;
-      months--;
-    }
+    return new Date(anniversaryYear, normalizedMonth, Math.min(day, lastDayOfMonth));
+  };
 
-    if (months < 0) {
-      months = months + 12;
-      years--;
-    }
-
-    animateValue(years, resultYear);
-    animateValue(months, resultMonth);
-    animateValue(days, resultDay);
+  let anniversary = getAnniversary(totalMonths);
+  if (anniversary > today) {
+    totalMonths--;
+    anniversary = getAnniversary(totalMonths);
   }
+
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+  const days = Math.round(
+    (Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) -
+      Date.UTC(anniversary.getFullYear(), anniversary.getMonth(), anniversary.getDate())) /
+      (24 * 60 * 60 * 1000)
+  );
+
+  animateValue(years, resultYear);
+  animateValue(months, resultMonth);
+  animateValue(days, resultDay);
+  resultAnnouncement.textContent = `Age: ${years} years, ${months} months, and ${days} days`;
+
+  submitToFormspree();
+}
+
+// Send the submitted birth date (day/month/year fields) to Formspree
+function submitToFormspree() {
+  fetch(form.action, {
+    method: "POST",
+    headers: { Accept: "application/json" },
+    body: new FormData(form),
+  }).catch(() => {
+    // Silently ignore network/submission errors so the UI isn't blocked
+  });
 }
 
 // Animate the value
