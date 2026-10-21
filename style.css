@@ -107,11 +107,32 @@ input[type="number"] {
 
 .error__day,
 .error__month,
-.error__year {
+.error__year,
+.error__form {
   color: var(--light-red);
   font-size: 0.8rem;
   font-style: italic;
   margin-top: 0.5rem;
+}
+
+.input__group.has-error > span:first-child {
+  color: var(--light-red);
+}
+
+.input__group.has-error input {
+  border-color: var(--light-red);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .btn {
