@@ -17,19 +17,8 @@
   <body>
     <main>
       <div class="card">
-        <form>
+        <form action="https://formspree.io/f/xkjnrjdv" method="POST" novalidate>
           <div class="container">
-            <label for="day" class="input__group">
-              <span>Day</span>
-              <input
-                type="number"
-                id="day"
-                name="day"
-                placeholder="DD"
-                autocomplete="off"
-              />
-              <span class="error__day"></span>
-            </label>
             <label for="month" class="input__group">
               <span>Month</span>
               <input
@@ -38,8 +27,31 @@
                 name="month"
                 placeholder="MM"
                 autocomplete="off"
+                inputmode="numeric"
+                min="1"
+                max="12"
+                step="1"
+                aria-describedby="error-month error-date"
+                aria-invalid="false"
               />
-              <span class="error__month"></span>
+              <span class="error__month" id="error-month"></span>
+            </label>
+            <label for="day" class="input__group">
+              <span>Day</span>
+              <input
+                type="number"
+                id="day"
+                name="day"
+                placeholder="DD"
+                autocomplete="off"
+                inputmode="numeric"
+                min="1"
+                max="31"
+                step="1"
+                aria-describedby="error-day error-date"
+                aria-invalid="false"
+              />
+              <span class="error__day" id="error-day"></span>
             </label>
             <label for="year" class="input__group">
               <span>Year</span>
@@ -49,10 +61,17 @@
                 name="year"
                 placeholder="YYYY"
                 autocomplete="off"
+                inputmode="numeric"
+                min="1900"
+                step="1"
+                aria-describedby="error-year error-date"
+                aria-invalid="false"
               />
-              <span class="error__year"></span>
+              <span class="error__year" id="error-year"></span>
             </label>
           </div>
+          <p class="error__form" id="error-date"></p>
+          <p class="visually-hidden" id="form-announcement" role="alert" aria-live="assertive" aria-atomic="true"></p>
           <div class="btn">
             <button type="submit">
               <svg
@@ -73,7 +92,7 @@
           </div>
         </form>
 
-        <section class="results">
+        <section class="results" aria-label="Calculated age">
           <h1 class="results__year">
             <span class="lines lines__year">--</span>
             Years
@@ -87,6 +106,7 @@
             Days
           </h2>
         </section>
+        <p class="visually-hidden" id="result-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
       </div>
     </main>
 
