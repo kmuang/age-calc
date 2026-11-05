@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./img/favicon-32x32.png"
+    />
+    <link rel="stylesheet" href="style.css" />
+
+    <title>Frontend Mentor | Age calculator app</title>
+  </head>
+  <body>
+    <main>
+      <div class="card">
+        <form action="https://formspree.io/f/xkjnrjdv" method="POST" novalidate>
+          <div class="container">
+            <label for="month" class="input__group">
+              <span>Month</span>
+              <input
+                type="number"
+                id="month"
+                name="month"
+                placeholder="MM"
+                autocomplete="off"
+                inputmode="numeric"
+                min="1"
+                max="12"
+                step="1"
+                aria-describedby="error-month error-date"
+                aria-invalid="false"
+              />
+              <span class="error__month" id="error-month"></span>
+            </label>
+            <label for="day" class="input__group">
+              <span>Day</span>
+              <input
+                type="number"
+                id="day"
+                name="day"
+                placeholder="DD"
+                autocomplete="off"
+                inputmode="numeric"
+                min="1"
+                max="31"
+                step="1"
+                aria-describedby="error-day error-date"
+                aria-invalid="false"
+              />
+              <span class="error__day" id="error-day"></span>
+            </label>
+            <label for="year" class="input__group">
+              <span>Year</span>
+              <input
+                type="number"
+                id="year"
+                name="year"
+                placeholder="YYYY"
+                autocomplete="off"
+                inputmode="numeric"
+                min="1900"
+                step="1"
+                aria-describedby="error-year error-date"
+                aria-invalid="false"
+              />
+              <span class="error__year" id="error-year"></span>
+            </label>
+          </div>
+          <p class="error__form" id="error-date"></p>
+          <p class="visually-hidden" id="form-announcement" role="alert" aria-live="assertive" aria-atomic="true"></p>
+          <div class="btn">
+            <button type="submit">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="46"
+                height="44"
+                viewBox="0 0 46 44"
+                role="img"
+                title="Submit"
+              >
+                <g fill="none" stroke="#FFF" stroke-width="2">
+                  <path
+                    d="M1 22.019C8.333 21.686 23 25.616 23 44M23 44V0M45 22.019C37.667 21.686 23 25.616 23 44"
+                  />
+                </g>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <section class="results" aria-label="Calculated age">
+          <h1 class="results__year">
+            <span class="lines lines__year">--</span>
+            Years
+          </h1>
+          <h2 class="results__month">
+            <span class="lines lines__month">--</span>
+            Months
+          </h2>
+          <h2 class="results__day">
+            <span class="lines lines__day">--</span>
+            Days
+          </h2>
+        </section>
+        <p class="visually-hidden" id="result-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
